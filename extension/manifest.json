@@ -5,6 +5,12 @@
     "description": "Keep your videos playback positions in sync across all of your devices and browser restarts.",
     "version": "1.0.0",
 
+    "icons": {
+        "16": "img/veep-16.png",
+        "48": "img/veep-48.png",
+        "128": "img/veep-128.png"
+    },
+
     "content_scripts": [{
         "matches": ["*://*.youtube.com/watch*"],
         "js": ["src/url-params.js", "src/youtube.js"],
