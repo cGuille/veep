@@ -1,0 +1,19 @@
+{
+    "manifest_version": 2,
+
+    "name": "Veep",
+    "description": "Keep your videos playback positions in sync across all of your devices and browser restarts.",
+    "version": "1.0.0",
+
+    "content_scripts": [{
+        "matches": ["*://*.youtube.com/watch*"],
+        "js": ["src/url-params.js", "src/youtube.js"],
+        "run_at": "document_end"
+    }],
+
+    "background": {
+        "scripts": ["src/youtube-cleanup.js"]
+    },
+
+    "permissions": ["storage"]
+}
