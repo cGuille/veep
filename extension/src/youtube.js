@@ -18,12 +18,14 @@
 var videoId = UrlParams.get('v');
 var videoElt = document.querySelector('video.html5-main-video');
 
-fetchVideoTime(videoId, function (videoTime) {
-    if (videoTime) {
-        videoElt.currentTime = videoTime;
+// Fetch video details to set the current time with the saved one:
+youtubeStorage.fetch(videoId, function (videoData) {
+    if (videoData && videoData.time) {
+        videoElt.currentTime = videoData.time;
     }
 });
 
+// Save the current time regularly:
 var minimalSaveInterval = 3000; // ms
 var lastSavedTime = Date.now() - minimalSaveInterval - 1;
 videoElt.addEventListener('timeupdate', function (event) {
@@ -31,38 +33,11 @@ videoElt.addEventListener('timeupdate', function (event) {
     if (now - lastSavedTime < minimalSaveInterval) {
         return; // Throttle the save operations:
     }
-    saveVideoTime(videoId, this.currentTime);
+    youtubeStorage.save({ videoId: videoId, time: this.currentTime });
     lastSavedTime = now;
 });
 
+// Clean the saved time when the video playing has ended:
 videoElt.addEventListener('ended', function (event) {
-    deleteVideoTime(videoId);
+    youtubeStorage.delete(videoId);
 });
-
-function saveVideoTime(videoId, time) {
-    var videoKey = videoStorageKey(videoId);
-    var storageData = {};
-    storageData[videoKey] = {
-        _id: videoKey,
-        videoId: videoId,
-        time: time,
-        updated_at: Date.now(),
-    };
-    chrome.storage.sync.set(storageData);
-}
-
-function deleteVideoTime(videoId) {
-    chrome.storage.sync.remove(videoStorageKey(videoId));
-}
-
-function fetchVideoTime(videoId, callback) {
-    var videoKey = videoStorageKey(videoId);
-    chrome.storage.sync.get(videoKey, function (items) {
-        var videoData = items[videoKey] || {};
-        callback(videoData.time);
-    });
-}
-
-function videoStorageKey(videoId) {
-    return 'veep-youtube-' + videoId;
-}

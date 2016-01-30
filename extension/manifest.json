@@ -13,7 +13,11 @@
 
     "content_scripts": [{
         "matches": ["*://*.youtube.com/watch*"],
-        "js": ["src/url-params.js", "src/youtube.js"],
+        "js": [
+            "src/youtube-storage.js",
+            "src/url-params.js",
+            "src/youtube.js"
+        ],
         "run_at": "document_end"
     }],
 

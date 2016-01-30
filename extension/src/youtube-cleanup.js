@@ -21,25 +21,12 @@ var maxNumberOfRecords = 100;
 cleanupOldVideoData();
 
 function cleanupOldVideoData() {
-    chrome.storage.sync.get(function (items) {
-        var records = [];
-        for (var key in items) {
-            if (key.indexOf('veep-youtube-') !== 0) {
-                continue;
-            }
-            records.push(items[key]);
-        }
-
+    youtubeStorage.fetchAll({ sort: 'by-date' }, function (records) {
         if (records.length >= maxNumberOfRecords) {
-            records.sort(function (record1, record2) {
-                return record1.updated_at - record2.updated_at;
-            });
-            records.slice(maxNumberOfRecords + 1).forEach(function (record) {
-                delete items[record._id];
+            records.slice(maxNumberOfRecords).forEach(function (record) {
+                youtubeStorage.delete(record.videoId);
             });
         }
-
+        setTimeout(cleanupOldVideoData, cleanupInterval * 60 * 1000);
     });
-
-    setTimeout(cleanupOldVideoData, cleanupInterval * 60 * 1000);
 }
