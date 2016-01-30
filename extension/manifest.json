@@ -18,7 +18,11 @@
     }],
 
     "background": {
-        "scripts": ["src/youtube-cleanup.js", "src/last-videos.js"]
+        "scripts": [
+            "src/youtube-storage.js",
+            "src/youtube-cleanup.js",
+            "src/last-videos.js"
+        ]
     },
 
     "browser_action": {
