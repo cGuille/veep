@@ -19,7 +19,9 @@ var videoId = UrlParams.get('v');
 var videoElt = document.querySelector('video.html5-main-video');
 
 fetchVideoTime(videoId, function (videoTime) {
-    videoElt.currentTime = videoTime;
+    if (videoTime) {
+        videoElt.currentTime = videoTime;
+    }
 });
 
 var minimalSaveInterval = 3000; // ms
