@@ -3,7 +3,7 @@
 
     "name": "Veep",
     "description": "Keep your videos playback positions in sync across all of your devices and browser restarts.",
-    "version": "1.0.0",
+    "version": "1.0.1",
 
     "icons": {
         "16": "img/veep-16.png",
