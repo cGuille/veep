@@ -19,6 +19,8 @@ this.youtubeStorage = new YoutubeStorage(chrome.storage.sync);
 
 function YoutubeStorage(store) {
     this.store = store;
+    this.changedListeners = [];
+    chrome.storage.onChanged.addListener(youtubeStorageChangedListener(this));
 }
 
 YoutubeStorage.prototype.fetch = function YoutubeStorage_fetch(videoId, callback) {
@@ -75,6 +77,46 @@ YoutubeStorage.prototype.delete = function YoutubeStorage_delete(videoId, callba
     this.store.remove(storageKey(videoId), callback);
 };
 
+YoutubeStorage.prototype.addChangedListener = function YoutubeStorage_addChangedListener(listener) {
+    this.changedListeners.push(listener);
+};
+
+YoutubeStorage.prototype.removeChangedListener = function YoutubeStorage_removeChangedListener(listener) {
+    var listenerIndex = this.changedListeners.indexOf(listener);
+    if (listenerIndex >= 0) {
+        this.changedListeners.splice(listenerIndex, 1);
+    }
+};
+
 function storageKey(videoId) {
     return 'veep-youtube-' + videoId;
+}
+
+function youtubeStorageChangedListener(youtubeStorage) {
+    return function(changes, area) {
+        var hasChanges = false;
+        var key;
+
+        // Filtered changes of non-youtube keys
+        for (key in changes) {
+            if (!changes.hasOwnProperty(key)) {
+                continue;
+            }
+            if (key.indexOf('veep-youtube-') === -1) {
+                delete changes[key];
+            } else {
+                hasChanges = true;
+            }
+        }
+
+        // If the changes do not concern youtube storage, do not trigger the event
+        if (!hasChanges) {
+            return;
+        }
+
+        // Trigger the event to every listeners
+        youtubeStorage.changedListeners.forEach(function (listener) {
+            listener(changes, area);
+        });
+    };
 }

@@ -15,7 +15,31 @@
 // You should have received a copy of the GNU General Public License
 // along with Veep.  If not, see <http://www.gnu.org/licenses/>.
 
+var badgeCounter = 0;
+
 youtubeStorage.fetchAll({ sort: 'most-recent' }, function (records) {
-    var totalRecordsCount = records.length;
-    chrome.browserAction.setBadgeText({ text: totalRecordsCount.toString(10) });
+    badgeCounter += records.length;
+    chrome.browserAction.setBadgeText({ text: badgeCounter.toString(10) });
+});
+
+youtubeStorage.addChangedListener(function (changes, area) {
+    var changedRecordsCount = 0;
+    var key;
+
+    for (key in changes) {
+        if (changes.hasOwnProperty(key)) {
+            if (!changes[key].oldValue) {
+                ++changedRecordsCount;
+            }
+            if (!changes[key].newValue) {
+                --changedRecordsCount;
+            }
+        }
+    }
+
+    badgeCounter += changedRecordsCount;
+
+    if (changedRecordsCount !== 0) {
+        chrome.browserAction.setBadgeText({ text: badgeCounter.toString(10) });
+    }
 });
