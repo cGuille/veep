@@ -19,6 +19,10 @@ updateVideoList(document.querySelector('.videos'));
 
 function updateVideoList(videoListElt) {
     fetchLastVideos({ limit: 10 }, function (videos) {
+        if (!videos.length) {
+            videoListElt.innerHTML = '<p>No currently watching videos. Sorry pal!</p>';
+            return;
+        }
         videoListElt.innerHTML = '';
         videos.map(videoListItem).forEach(function (listItem) {
             videoListElt.appendChild(listItem);
