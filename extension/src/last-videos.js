@@ -41,13 +41,21 @@ function fetchLastVideos(options, callback) {
 function videoListItem(video) {
     var listItemElt = document.createElement('div');
     var videoOpeningBtn = document.createElement('button');
+    var videoRemovalBtn = document.createElement('button');
 
-    videoOpeningBtn.innerHTML = video.videoId;
+    videoOpeningBtn.innerHTML = '▶';
     videoOpeningBtn.addEventListener('click', function (event) {
         chrome.tabs.create({ url: video.url });
     });
 
+    videoRemovalBtn.innerHTML = '×';
+    videoRemovalBtn.addEventListener('click', function (event) {
+        youtubeStorage.delete(video.videoId);
+        window.close();
+    });
+
     listItemElt.appendChild(videoOpeningBtn);
+    listItemElt.appendChild(videoRemovalBtn);
 
     return listItemElt;
 }
