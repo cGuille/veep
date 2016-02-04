@@ -17,6 +17,8 @@
 
 var videoId = UrlParams.get('v');
 var videoElt = document.querySelector('video.html5-main-video');
+var videoTitleElt = document.querySelector('.watch-title ');
+var videoTitle = videoTitleElt ? (videoTitleElt.title || '') : '';
 
 // Fetch video details to set the current time with the saved one:
 youtubeStorage.fetch(videoId, function (videoData) {
@@ -33,7 +35,7 @@ videoElt.addEventListener('timeupdate', function (event) {
     if (now - lastSavedTime < minimalSaveInterval) {
         return; // Throttle the save operations:
     }
-    youtubeStorage.save({ videoId: videoId, time: this.currentTime });
+    youtubeStorage.save({ videoId: videoId, title: videoTitle, time: this.currentTime });
     lastSavedTime = now;
 });
 

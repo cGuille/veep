@@ -67,6 +67,7 @@ YoutubeStorage.prototype.save = function YoutubeStorage_save(videoData, callback
     storageData[videoKey] = {
         _id: videoKey,
         videoId: videoData.videoId,
+        title: videoData.title,
         time: videoData.time,
         updated_at: Date.now(),
     };

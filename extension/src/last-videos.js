@@ -40,10 +40,11 @@ function fetchLastVideos(options, callback) {
 
 function videoListItem(video) {
     var listItemElt = document.createElement('div');
+    var videoTitleElt = document.createTextNode(displayableTitle(video.title));
     var videoOpeningBtn = document.createElement('button');
     var videoRemovalBtn = document.createElement('button');
 
-    videoOpeningBtn.innerHTML = '▶';
+    videoOpeningBtn.innerHTML = '▶ ';
     videoOpeningBtn.addEventListener('click', function (event) {
         chrome.tabs.create({ url: video.url });
     });
@@ -54,6 +55,7 @@ function videoListItem(video) {
         window.close();
     });
 
+    videoOpeningBtn.appendChild(videoTitleElt);
     listItemElt.appendChild(videoOpeningBtn);
     listItemElt.appendChild(videoRemovalBtn);
 
@@ -63,4 +65,22 @@ function videoListItem(video) {
 var veepFeatureQueryPart = encodeURIComponent('feature') + '=' + encodeURIComponent('veep');
 function videoUrl(video) {
     return 'https://www.youtube.com/watch?v=' + encodeURIComponent(video.videoId) + '&' + veepFeatureQueryPart;
+}
+
+var titleMaxLength = 45;
+var titlePartsLength = (titleMaxLength / 2) - 2;
+function displayableTitle(title) {
+    if (typeof(title) !== 'string') {
+        return '';
+    }
+
+    if (title.length < titleMaxLength) {
+        return title;
+    }
+
+    return [
+        title.slice(0, titlePartsLength),
+        '[…]',
+        title.slice(-titlePartsLength),
+    ].join(' ');
 }
