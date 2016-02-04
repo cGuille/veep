@@ -18,7 +18,7 @@
 updateVideoList(document.querySelector('.videos'));
 
 function updateVideoList(videoListElt) {
-    fetchLastVideos({ limit: 10 }, function (videos) {
+    fetchLastVideos(function (videos) {
         if (!videos.length) {
             videoListElt.innerHTML = '<p class="no-videos">You are not watching much videos these times, are you?</p>';
             return;
@@ -30,9 +30,8 @@ function updateVideoList(videoListElt) {
     });
 }
 
-function fetchLastVideos(options, callback) {
+function fetchLastVideos(callback) {
     youtubeStorage.fetchAll({ sort: 'most-recent' }, function (records) {
-        records = records.slice(0, options.limit);
         records.forEach(function (record) { record.url = videoUrl(record); });
         callback(records);
     });
