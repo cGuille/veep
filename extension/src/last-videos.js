@@ -20,7 +20,7 @@ updateVideoList(document.querySelector('.videos'));
 function updateVideoList(videoListElt) {
     fetchLastVideos({ limit: 10 }, function (videos) {
         if (!videos.length) {
-            videoListElt.innerHTML = '<p>No currently watching videos. Sorry pal!</p>';
+            videoListElt.innerHTML = '<p class="no-videos">You are not watching much videos these times, are you?</p>';
             return;
         }
         videoListElt.innerHTML = '';
@@ -40,16 +40,21 @@ function fetchLastVideos(options, callback) {
 
 function videoListItem(video) {
     var listItemElt = document.createElement('div');
-    var videoTitleElt = document.createTextNode(displayableTitle(video.title));
+    var videoTitleElt = document.createTextNode(video.title || '');
     var videoOpeningBtn = document.createElement('button');
     var videoRemovalBtn = document.createElement('button');
 
+    listItemElt.classList.add('video');
+
     videoOpeningBtn.innerHTML = '▶ ';
+    videoOpeningBtn.title = video.title;
+    videoOpeningBtn.classList.add('open-video');
     videoOpeningBtn.addEventListener('click', function (event) {
         chrome.tabs.create({ url: video.url });
     });
 
     videoRemovalBtn.innerHTML = '×';
+    videoRemovalBtn.classList.add('remove-video');
     videoRemovalBtn.addEventListener('click', function (event) {
         youtubeStorage.delete(video.videoId);
         window.close();
@@ -65,22 +70,4 @@ function videoListItem(video) {
 var veepFeatureQueryPart = encodeURIComponent('feature') + '=' + encodeURIComponent('veep');
 function videoUrl(video) {
     return 'https://www.youtube.com/watch?v=' + encodeURIComponent(video.videoId) + '&' + veepFeatureQueryPart;
-}
-
-var titleMaxLength = 45;
-var titlePartsLength = (titleMaxLength / 2) - 2;
-function displayableTitle(title) {
-    if (typeof(title) !== 'string') {
-        return '';
-    }
-
-    if (title.length < titleMaxLength) {
-        return title;
-    }
-
-    return [
-        title.slice(0, titlePartsLength),
-        '[…]',
-        title.slice(-titlePartsLength),
-    ].join(' ');
 }

@@ -17,7 +17,7 @@
 
 var videoId = UrlParams.get('v');
 var videoElt = document.querySelector('video.html5-main-video');
-var videoTitleElt = document.querySelector('.watch-title ');
+var videoTitleElt = document.querySelector('.watch-title');
 var videoTitle = videoTitleElt ? (videoTitleElt.title || '') : '';
 
 // Fetch video details to set the current time with the saved one:
